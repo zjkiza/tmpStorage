@@ -39,7 +39,7 @@ bin/console zjkiza:tmp-storage:maintenance
 Add the bundle to your project using Composer:
 
 ```bash
-composer require zjkiza/tmo-storage-bundle
+composer require zjkiza/tmp-storage-bundle
 ```
 
 ## Symfony integration

@@ -1,5 +1,5 @@
 {
-    "name": "zjkiza/tmo-storage-bundle",
+    "name": "zjkiza/tmp-storage-bundle",
     "description": "The bundle for temporary storage data which needs to be preserved between stateless requests.",
     "type": "symfony-bundle",
     "license": "MIT",
