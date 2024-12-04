@@ -1,0 +1,9 @@
+ doctrine:schema:update --force
+
+ Da, događaj postGenerateSchema se pokreće isključivo tokom generisanja šeme, tj. pri korišćenju komandi poput:
+
+ doctrine:schema:create
+ doctrine:schema:update
+ doctrine:schema:validate
+ Ovaj događaj nije povezan sa pristupom tabelama u runtime-u, niti se pokreće pri redovnim upitima prema bazi podataka.
+

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <service
+                id="Zjk\TmpStorage\Doctrine\EventListener\PostGenerateSchema"
+                class="Zjk\TmpStorage\Doctrine\EventListener\PostGenerateSchema"
+        >
+            <argument
+                    type="service"
+                    id="doctrine.dbal.default_connection"
+                    on-invalid="ignore"
+            />
+
+            <argument>%zjkiza_tmp_storage.dbal.table_name%</argument>
+
+            <tag
+                    name="doctrine.event_listener"
+                    event="postGenerateSchema"
+            />
+        </service>
+
+        <service
+                id="Zjk\TmpStorage\Doctrine\Repository\TmpStorageRepository"
+                class="Zjk\TmpStorage\Doctrine\Repository\TmpStorageRepository"
+                public="true"
+        >
+            <argument
+                    type="service"
+                    id="doctrine.dbal.default_connection"
+                    on-invalid="ignore"
+            />
+
+            <argument>%zjkiza_tmp_storage.dbal.table_name%</argument>
+
+        </service>
+
+        <service
+                id="Zjk\TmpStorage\Contract\TmpStorageInterface"
+                alias="Zjk\TmpStorage\Doctrine\Repository\TmpStorageRepository"
+        />
+
+        <service
+                id="Zjk\TmpStorage\Command\MaintenanceCommand"
+                class="Zjk\TmpStorage\Command\MaintenanceCommand"
+        >
+            <argument
+                    type="service"
+                    id="Zjk\TmpStorage\Contract\TmpStorageInterface"
+            />
+
+            <tag name="console.command"/>
+
+        </service>
+
+    </services>
+</container>
