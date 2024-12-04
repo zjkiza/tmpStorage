@@ -11,7 +11,7 @@ use Zjk\TmpStorage\Contract\TmpStorageInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand(
-    name: 'zjk:tmp-storage:maintenance',
+    name: 'zjkiza:tmp-storage:maintenance',
     description: 'Clear expired records from tmp storage.'
 )]
 final class MaintenanceCommand extends Command
