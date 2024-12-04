@@ -62,7 +62,7 @@ return [
 
 2. **Configure the Bundle**
 
-By default, the bundle uses a database table named `zjkiza_tmp_storag`e and the `doctrine.dbal.default_connection`. To customize these settings, create a `zjkiza_tmp_storage.yaml` configuration file in the config/packages directory with the following parameters:
+By default, the bundle uses a database table named `zjkiza_tmp_storage` and the `doctrine.dbal.default_connection`. To customize these settings, create a `zjkiza_tmp_storage.yaml` configuration file in the config/packages directory with the following parameters:
 
 ```yaml
 zjkiza_tmp_storage:
