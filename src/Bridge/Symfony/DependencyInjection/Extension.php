@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Zjk\TmpStorage\DependencyInjection;
+namespace Zjk\TmpStorage\Bridge\Symfony\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\Extension as SymfonyExtension;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\DependencyInjection\Extension\Extension as SymfonyExtension;
 use Zjk\TmpStorage\Doctrine\EventListener\PostGenerateSchema;
 use Zjk\TmpStorage\Doctrine\Repository\TmpStorageRepository;
 

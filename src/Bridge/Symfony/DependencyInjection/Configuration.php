@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Zjk\TmpStorage\DependencyInjection;
+namespace Zjk\TmpStorage\Bridge\Symfony\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;

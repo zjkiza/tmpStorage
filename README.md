@@ -55,7 +55,7 @@ declare(strict_types=1);
 
 return [
     // other bundles
-    Zjk\TmpStorage\ZJKizaTmpStorageBundle::class => ['all' => true],
+    Zjk\TmpStorage\Bridge\Symfony\ZJKizaTmpStorageBundle::class => ['all' => true],
 ];
 
 ```

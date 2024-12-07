@@ -10,18 +10,15 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Zjk\TmpStorage\Contract\TmpStorageInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+
 #[AsCommand(
     name: 'zjkiza:tmp-storage:maintenance',
     description: 'Clear expired records from tmp storage.'
 )]
 final class MaintenanceCommand extends Command
 {
-    private TmpStorageInterface $tmpStorage;
-
-    public function __construct(TmpStorageInterface $tmpStorage)
+    public function __construct(private readonly TmpStorageInterface $tmpStorage)
     {
-        $this->tmpStorage = $tmpStorage;
-
         parent::__construct();
     }
 
@@ -34,6 +31,7 @@ final class MaintenanceCommand extends Command
             $io->success('All expired tmp storage are removed.');
         } catch (\Exception) {
             $io->error('Unable to clear expired tmp contents.');
+
             return self::FAILURE;
         }
 

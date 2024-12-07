@@ -15,14 +15,8 @@ use Ramsey\Uuid\Uuid;
 
 final class TmpStorageRepository implements TmpStorageInterface
 {
-    private Connection $connection;
-
-    private string $tableName;
-
-    public function __construct(Connection $connection, string $tableName = PostGenerateSchema::DEFAULT_TABLE_NAME)
+    public function __construct(private readonly Connection $connection, private readonly string $tableName = PostGenerateSchema::DEFAULT_TABLE_NAME)
     {
-        $this->connection = $connection;
-        $this->tableName = $tableName;
     }
 
     public function storage(object $tmp, int $ttl = 604800): string
@@ -62,7 +56,7 @@ final class TmpStorageRepository implements TmpStorageInterface
 
         $object = $this->unserializeSting($row['tmp_object']);
 
-        if (true === $remove) {
+        if ($remove) {
             $this->remove($id);
         }
 
@@ -111,11 +105,7 @@ final class TmpStorageRepository implements TmpStorageInterface
             return false;
         }
 
-        if ($createdAt > $dateTime) {
-            return false;
-        }
-
-        return true;
+        return $createdAt <= $dateTime;
     }
 
     private function dateTimeImmutable(string $dateTime, AbstractPlatform $abstractPlatform): \DateTimeImmutable

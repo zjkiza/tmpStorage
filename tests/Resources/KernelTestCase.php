@@ -26,11 +26,8 @@ class KernelTestCase extends SymfonyKernelTestCase
      *
      * @throws Exception
      */
-    public function getTmpStorage(): TmpStorageInterface
+    public function getTmpStorage(Connection $connection): TmpStorageInterface
     {
-        /** @var Connection $connection */
-        $connection    = $this->getContainer()->get('doctrine.dbal.default_connection');
-
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $entityManager->method('getConnection')->willReturn($connection);
 

@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Zjk\TmpStorage\Tests\Resources\App;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
+use Ramsey\Uuid\Doctrine\UuidType;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Kernel;
-use Ramsey\Uuid\Doctrine\UuidType;
-use Zjk\TmpStorage\ZJKizaTmpStorageBundle;
+use Zjk\TmpStorage\Bridge\Symfony\ZJKizaTmpStorageBundle;
 
 class ZJKizaTmpStorageBundleTestKernel extends Kernel
 {
@@ -48,6 +48,13 @@ class ZJKizaTmpStorageBundleTestKernel extends Kernel
                 'types' => [
                     'uuid' => UuidType::class,
                 ],
+            ],
+            'orm'  => [
+                'auto_generate_proxy_classes' => true,
+                'naming_strategy'             => 'doctrine.orm.naming_strategy.underscore_number_aware',
+                'auto_mapping'                => true,
+                'enable_lazy_ghost_objects'   => true,
+                'report_fields_where_declared' => true,
             ],
         ]);
     }

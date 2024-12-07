@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Zjk\TmpStorage\Tests\Repository;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
+use Zjk\TmpStorage\Contract\TmpStorageInterface;
 use Zjk\TmpStorage\Doctrine\EventListener\PostGenerateSchema;
 use Zjk\TmpStorage\Exception\NotExistsException;
 use Zjk\TmpStorage\Tests\Resources\KernelTestCase;
@@ -12,25 +14,33 @@ use Zjk\TmpStorage\Tests\Resources\Model\Foo;
 
 final class TmpStorageRepositoryTest extends KernelTestCase
 {
+    private Connection $connection;
+    private TmpStorageInterface $repository;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->connection = $this->getConnection();
+
+        $this->repository = $this->getTmpStorage($this->connection);
+    }
+
     /**
      * @throws Exception
      */
     public function testStore(): void
     {
-        $connection    = $this->getContainer()->get('doctrine.dbal.default_connection');
-
-        $repository = $this->getTmpStorage();
-
         $class = new Foo();
 
-        $key = $repository->storage($class, 5000);
+        $key = $this->repository->storage($class, 5000);
 
-        $object = $repository->fetch($key);
+        $object = $this->repository->fetch($key);
 
         $this->assertInstanceOf(Foo::class, $object);
         $this->assertSame($class->name, $object->name);
 
-        $row = $connection->executeQuery(\sprintf('SELECT * FROM %s WHERE id = :id LIMIT 1', PostGenerateSchema::DEFAULT_TABLE_NAME), [
+        $row = $this->connection->executeQuery(\sprintf('SELECT * FROM %s WHERE id = :id LIMIT 1', PostGenerateSchema::DEFAULT_TABLE_NAME), [
             'id' => $key,
         ])->fetchAssociative();
 
@@ -42,20 +52,16 @@ final class TmpStorageRepositoryTest extends KernelTestCase
      */
     public function testStoreAndReadingOfStorageWithoutRemovingRecords(): void
     {
-        $connection    = $this->getContainer()->get('doctrine.dbal.default_connection');
-
-        $repository = $this->getTmpStorage();
-
         $class = new Foo();
 
-        $key = $repository->storage($class, 5000);
+        $key = $this->repository->storage($class, 5000);
 
-        $object = $repository->fetch($key, false);
+        $object = $this->repository->fetch($key, false);
 
         $this->assertInstanceOf(Foo::class, $object);
         $this->assertSame($class->name, $object->name);
 
-        $row = $connection->executeQuery(\sprintf('SELECT * FROM %s WHERE id = :id LIMIT 1', PostGenerateSchema::DEFAULT_TABLE_NAME), [
+        $row = $this->connection->executeQuery(\sprintf('SELECT * FROM %s WHERE id = :id LIMIT 1', PostGenerateSchema::DEFAULT_TABLE_NAME), [
             'id' => $key,
         ])->fetchAssociative();
 
@@ -67,17 +73,13 @@ final class TmpStorageRepositoryTest extends KernelTestCase
      */
     public function testRemoveKeyFromStorage(): void
     {
-        $connection = $this->getContainer()->get('doctrine.dbal.default_connection');
-
-        $repository = $this->getTmpStorage();
-
         $class = new Foo();
 
-        $key = $repository->storage($class, 5000);
+        $key = $this->repository->storage($class, 5000);
 
-        $repository->remove($key);
+        $this->repository->remove($key);
 
-        $row = $connection->executeQuery(\sprintf('SELECT * FROM %s WHERE id = :id LIMIT 1', PostGenerateSchema::DEFAULT_TABLE_NAME), [
+        $row = $this->connection->executeQuery(\sprintf('SELECT * FROM %s WHERE id = :id LIMIT 1', PostGenerateSchema::DEFAULT_TABLE_NAME), [
             'id' => $key,
         ])->fetchAssociative();
 
@@ -89,25 +91,21 @@ final class TmpStorageRepositoryTest extends KernelTestCase
      */
     public function testClearGarbage(): void
     {
-        $connection    = $this->getContainer()->get('doctrine.dbal.default_connection');
-
-        $repository = $this->getTmpStorage();
-
         $class = new Foo();
 
-        $key1 = $repository->storage($class, 60000);
-        $key2 = $repository->storage($class, 1);
+        $key1 = $this->repository->storage($class, 60000);
+        $key2 = $this->repository->storage($class, 1);
 
-        $rows = $connection->executeQuery(\sprintf('SELECT * FROM %s ORDER BY created_at', PostGenerateSchema::DEFAULT_TABLE_NAME))->fetchAllAssociative();
+        $rows = $this->connection->executeQuery(\sprintf('SELECT * FROM %s ORDER BY created_at', PostGenerateSchema::DEFAULT_TABLE_NAME))->fetchAllAssociative();
 
         $this->assertCount(2, $rows);
         $this->assertSame($rows[0]['id'], $key1);
         $this->assertSame($rows[1]['id'], $key2);
 
         \sleep(2);
-        $repository->clearGarbage();
+        $this->repository->clearGarbage();
 
-        $rows = $connection->executeQuery(\sprintf('SELECT * FROM %s', PostGenerateSchema::DEFAULT_TABLE_NAME))->fetchAllAssociative();
+        $rows = $this->connection->executeQuery(\sprintf('SELECT * FROM %s', PostGenerateSchema::DEFAULT_TABLE_NAME))->fetchAllAssociative();
 
         $this->assertCount(1, $rows);
         $this->assertSame($rows[0]['id'], $key1);
@@ -122,9 +120,7 @@ final class TmpStorageRepositoryTest extends KernelTestCase
         $this->expectException(NotExistsException::class);
         $this->expectExceptionMessage(\sprintf('There is no data in the tmp storage with the key "%s"', $id));
 
-        $repository = $this->getTmpStorage();
-
-        $repository->fetch($id);
+        $this->repository->fetch($id);
     }
 
     /**
@@ -134,14 +130,20 @@ final class TmpStorageRepositoryTest extends KernelTestCase
     {
         $this->expectException(NotExistsException::class);
 
-        $repository = $this->getTmpStorage();
-
         $class = new Foo();
 
-        $key = $repository->storage($class, 1);
+        $key = $this->repository->storage($class, 1);
 
         \sleep(2);
 
-        $repository->fetch($key);
+        $this->repository->fetch($key);
+    }
+
+    private function getConnection(): Connection
+    {
+        /** @var Connection $connection */
+        $connection = $this->getContainer()->get('doctrine.dbal.default_connection');
+
+        return $connection;
     }
 }

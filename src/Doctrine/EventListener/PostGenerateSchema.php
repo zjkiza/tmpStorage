@@ -13,14 +13,8 @@ final class PostGenerateSchema
 {
     public const DEFAULT_TABLE_NAME = 'zjkiza_tmp_storage';
 
-    private Connection $connection;
-
-    private string $tableName;
-
-    public function __construct(Connection $connection, string $tableName = self::DEFAULT_TABLE_NAME)
+    public function __construct(private readonly Connection $connection, private readonly string $tableName = self::DEFAULT_TABLE_NAME)
     {
-        $this->connection = $connection;
-        $this->tableName = $tableName;
     }
 
     public function postGenerateSchema(GenerateSchemaEventArgs $eventArgs): void
