@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.1]
+
+###  Added
+
+- Unit tests for 100% coverage
+
 ## [0.6.0]
 
 ### Changed

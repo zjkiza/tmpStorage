@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Zjk\TmpStorage\Tests\Repository;
+namespace Doctrine\Repository;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
@@ -17,6 +17,11 @@ final class TmpStorageRepositoryTest extends KernelTestCase
     private Connection $connection;
     private TmpStorageInterface $repository;
 
+    /**
+     * @psalm-suppress InternalMethod
+     *
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         parent::setUp();
