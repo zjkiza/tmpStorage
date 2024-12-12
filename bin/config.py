@@ -1,6 +1,9 @@
 container_php = 'php_bundle_3'
 container_db = 'mysql_bundle_3'
 
+waiting_db_connection = True
+phpunit_code_error_bypass = False
+
 containers = [
     container_php,
     container_db

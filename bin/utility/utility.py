@@ -30,7 +30,7 @@ def run_container(verbose, waiting_db_connection, docker_compose_files_list, con
 
     is_containers_running(containers)
 
-    if waiting_db_connection:
+    if container_db is not None and waiting_db_connection:
         waiting_database_connection(container_db)
 
 
@@ -52,12 +52,22 @@ def down_container(verbose, docker_compose_files_list):
     Console().print(Markdown('***'), width=120)
 
 
-def process_test_result(output_process, name, verbose, result_of_tests):
+def process_test_result(output_process, command_name, verbose, result_of_tests, phpunit_code_error_bypass):
+
+    if phpunit_code_error_bypass and 'composer run phpunit' == command_name:
+        output = output_process.stdout
+        if "FAILURES!" in output or "Failures:" in output:
+            print_result('Failed.', 'red', verbose, output_process, command_name)
+            return result_of_tests + 1
+        else:
+            print_result('Pass.', 'green', verbose, output_process, command_name)
+            return result_of_tests
+
     if output_process.returncode:
-        print_result('Failed.', 'red', verbose, output_process, name)
+        print_result('Failed.', 'red', verbose, output_process, command_name)
         return result_of_tests + 1
     else:
-        print_result('Pass.', 'green', verbose, output_process, name)
+        print_result('Pass.', 'green', verbose, output_process, command_name)
         return result_of_tests
 
 
@@ -111,6 +121,10 @@ def is_environment_appropriate():
 
 def is_containers_running(containers):
     for container_name in containers:
+
+        if container_name is None:
+            continue
+
         if __is_container_running(container_name):
             Console().print('[yellow]Container "{}" has been successfully uploaded.[/yellow]'.format(container_name))
         else:

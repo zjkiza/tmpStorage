@@ -8,7 +8,8 @@ import click
 from utility.utility import run_container
 from utility.utility import process_test_result
 from utility.utility import down_container
-from config import container_php, container_db, containers, docker_compose_files_list, commands, container_work_dir
+from config import container_php, container_db, waiting_db_connection, containers, docker_compose_files_list, \
+    commands, container_work_dir, phpunit_code_error_bypass
 
 
 @click.command()
@@ -17,7 +18,7 @@ from config import container_php, container_db, containers, docker_compose_files
 def run(verbose):
     start = time.time()
 
-    run_container(verbose, True, docker_compose_files_list, containers, container_db)
+    run_container(verbose, waiting_db_connection, docker_compose_files_list, containers, container_db)
 
     result_of_tests = 0
 
@@ -32,7 +33,8 @@ def run(verbose):
             text=True
         )
 
-        result_of_tests = process_test_result(output_process, command_name, verbose, result_of_tests)
+        result_of_tests = process_test_result(output_process, command_name, verbose, result_of_tests,
+                                              phpunit_code_error_bypass)
 
     total_time = round(time.time() - start)
 

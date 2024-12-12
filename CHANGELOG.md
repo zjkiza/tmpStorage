@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.2]
+
+###  Added
+- License
+
+### Fixed
+- CI payton scrip
+
 ## [0.6.1]
 
 ###  Added
